@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Classic Game Vault</title>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--steel:#c9ccd1;--steel2:#8d939c;--body:#15181d;--screen:#0a2a52;--screen2:#0d3a73;--glow:#9fd3ff;--amber:#ffb629;--ok:#5de08a;--text:#e8f2ff;color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{background:radial-gradient(circle at 50% -10%,#2a3038,#0f1115 60%);color:var(--text);font:400 15px/1.5 'IBM Plex Mono',monospace;min-height:100vh}
+h1,h2,h3,.btn,.price{font-family:'Chakra Petch',sans-serif}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;gap:12px;align-items:center;padding:12px 18px;background:linear-gradient(#3a3f47,#23272d);border-bottom:3px solid #0c0d10;box-shadow:0 6px 20px #0008}
+.logo{font:700 20px 'Chakra Petch';letter-spacing:.5px;white-space:nowrap}
+.logo i{font-style:normal;color:var(--amber)}
+.search{flex:1;display:flex;background:var(--screen);border:2px inset #000;border-radius:6px;padding:0 10px;box-shadow:inset 0 0 18px #000a}
+.search input{flex:1;min-width:0;background:none;border:0;color:var(--glow);font:inherit;padding:10px 4px;outline:none}
+.search input::placeholder{color:#5f87b5}
+.cartbtn{background:linear-gradient(#e0e3e7,#a6abb3);color:#111;border:0;border-radius:6px;padding:10px 14px;font:700 14px 'Chakra Petch';cursor:pointer;box-shadow:0 3px 0 #5b6068}
+.cartbtn:active{transform:translateY(2px);box-shadow:0 1px 0 #5b6068}
+.hero{margin:18px auto;max-width:1200px;padding:0 18px}
+.bezel{background:linear-gradient(145deg,#454b55,#22262c);border-radius:18px;padding:16px;box-shadow:0 10px 30px #000a,inset 0 1px 0 #fff3}
+.screen{background:linear-gradient(180deg,var(--screen2),var(--screen));border:3px inset #000;border-radius:10px;padding:18px 20px;box-shadow:inset 0 0 40px #000b;position:relative;overflow:hidden}
+.screen:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(transparent 0 3px,#0003 3px 4px);pointer-events:none}
+.hero h1{font-size:clamp(22px,5vw,38px);color:#fff}
+.hero p{color:var(--glow);max-width:60ch}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.chip{background:linear-gradient(#d9dce0,#9da2aa);border:0;border-radius:5px;padding:7px 12px;font:700 13px 'Chakra Petch';color:#111;cursor:pointer;box-shadow:0 3px 0 #50555c}
+.chip.on{background:linear-gradient(#ffd77a,var(--amber));box-shadow:0 3px 0 #8a5d00}
+main{max-width:1200px;margin:0 auto;padding:0 18px 60px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
+.card{background:#1c2026;border:1px solid #3a4049;border-radius:12px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:border-color .15s,transform .15s}
+.card:hover{border-color:var(--amber);transform:translateY(-3px)}
+.art{aspect-ratio:16/10;display:grid;place-items:center;font:700 38px 'Chakra Petch';color:#fff9;text-shadow:0 2px 12px #0008;position:relative}
+.rank{position:absolute;top:8px;left:8px;background:#000a;color:var(--amber);font:500 12px 'IBM Plex Mono';padding:2px 8px;border-radius:4px}
+.info{padding:12px;display:flex;flex-direction:column;gap:6px;flex:1}
+.info h3{font-size:16px}
+.meta{color:var(--steel2);font-size:12px}
+.row{display:flex;justify-content:space-between;align-items:center;margin-top:auto;gap:8px}
+.price{font-size:20px;color:var(--amber);font-weight:700}
+.btn{border:0;border-radius:6px;padding:9px 14px;font-weight:700;font-size:14px;cursor:pointer;background:linear-gradient(#ffd77a,var(--amber));color:#2a1b00;box-shadow:0 3px 0 #8a5d00}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 #8a5d00}
+.btn.grey{background:linear-gradient(#e0e3e7,#a6abb3);color:#111;box-shadow:0 3px 0 #5b6068}
+.btn:focus-visible,.chip:focus-visible,.cartbtn:focus-visible,input:focus-visible{outline:2px solid var(--glow);outline-offset:2px}
+.overlay{position:fixed;inset:0;background:#000c;z-index:20;display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:calc(18px + env(safe-area-inset-top,0px)) 14px 30px}
+.overlay.open{display:flex}
+.modal{width:100%;max-width:760px}
+.x{float:right;background:#d33;color:#fff;border:0;border-radius:5px;padding:5px 12px;font:700 14px 'Chakra Petch';cursor:pointer}
+.trailer{aspect-ratio:16/9;border-radius:8px;margin:12px 0;display:grid;place-items:center;position:relative;overflow:hidden;border:2px solid #000}
+.play{position:relative;z-index:1;text-align:center;text-decoration:none;color:#fff}
+.play b{display:grid;place-items:center;width:74px;height:74px;margin:0 auto 8px;border-radius:50%;background:#e22;font-size:30px;box-shadow:0 0 0 6px #fff3,0 0 40px #e22a}
+.tags span{display:inline-block;border:1px solid var(--glow);border-radius:4px;padding:0 8px;margin:0 6px 6px 0;font-size:12px;color:var(--glow)}
+.line{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed #4b78ad}
+.line button{background:none;border:0;color:#ff8d8d;cursor:pointer;font:inherit}
+.total{font:700 24px 'Chakra Petch';color:var(--amber)}
+.methods{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.methods button{text-align:left;padding:12px;border-radius:6px;border:2px solid #4b78ad;background:#0b2f5e;color:var(--text);font:inherit;cursor:pointer}
+.methods button.on{border-color:var(--amber);background:#103f7d}
+.qrbox{background:#fff;padding:12px;border-radius:8px;display:inline-block;margin:8px 0}
+input.f{width:100%;background:#06203f;border:2px inset #000;border-radius:5px;color:var(--glow);font:inherit;padding:10px;margin:6px 0}
+.upi{background:#06203f;border:1px dashed var(--amber);padding:8px 12px;border-radius:6px;display:inline-block;color:var(--amber);font-weight:500}
+.center{text-align:center}
+.steps{display:flex;gap:6px;margin:10px 0;font-size:12px;color:#7fa9d6}.steps b{color:var(--amber)}
+.note{color:#9cc3ec;font-size:12px}
+.empty{color:#9cc3ec;padding:18px 0}
+@media(max-width:560px){.logo span{display:none}.methods{grid-template-columns:1fr}.art{font-size:30px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style></head><body>
+<header>
+ <div class="logo">▣ <span>CLASSIC GAME </span><i>VAULT</i></div>
+ <label class="search"><input id="q" type="search" placeholder="Search 100+ games…" aria-label="Search games"></label>
+ <button class="cartbtn" id="cartOpen">CART (<span id="cc">0</span>)</button>
+</header>
+<section class="hero"><div class="bezel"><div class="screen">
+ <h1>Select a game. Insert payment. Collect your key.</h1>
+ <p>108 classics and modern hits. Top-ranked games cost ₹999; prices step down with popularity to ₹899.</p>
+ <div class="chips" id="chips"></div>
+</div></div></section>
+<main><div class="grid" id="grid"></div><p class="empty" id="none" hidden>No games match that search. Try a shorter name.</p></main>
+
+<div class="overlay" id="ov"><div class="modal bezel"><div class="screen" id="panel"></div></div></div>
+
+<script>
+const RAW="Grand Theft Auto V|Action,Minecraft|Sandbox,The Witcher 3: Wild Hunt|RPG,Red Dead Redemption 2|Action,Elden Ring|RPG,God of War|Action,Cyberpunk 2077|RPG,Counter-Strike 2|Shooter,Call of Duty: Modern Warfare|Shooter,FIFA 23|Sports,Fortnite|Shooter,PUBG: Battlegrounds|Shooter,Valorant|Shooter,Apex Legends|Shooter,Assassin's Creed Valhalla|Action,Hogwarts Legacy|RPG,The Last of Us Part I|Action,Spider-Man Remastered|Action,Horizon Zero Dawn|Action,Resident Evil 4|Horror,Dark Souls III|RPG,Sekiro: Shadows Die Twice|Action,Skyrim Special Edition|RPG,Fallout 4|RPG,Baldur's Gate 3|RPG,Hades|Indie,Stardew Valley|Indie,Terraria|Sandbox,Among Us|Indie,Rocket League|Sports,Forza Horizon 5|Racing,Need for Speed Heat|Racing,Gran Turismo 7|Racing,Mortal Kombat 11|Fighting,Tekken 7|Fighting,Street Fighter 6|Fighting,Far Cry 6|Shooter,DOOM Eternal|Shooter,Halo Infinite|Shooter,Battlefield 2042|Shooter,Overwatch 2|Shooter,Rainbow Six Siege|Shooter,Borderlands 3|Shooter,Metro Exodus|Shooter,Death Stranding|Action,Ghost of Tsushima|Action,Marvel's Avengers|Action,Batman: Arkham Knight|Action,Devil May Cry 5|Action,Bayonetta 2|Action,Monster Hunter: World|RPG,Final Fantasy VII Remake|RPG,Persona 5 Royal|RPG,Dragon Age: Inquisition|RPG,Mass Effect Legendary|RPG,Diablo IV|RPG,Path of Exile|RPG,Genshin Impact|RPG,The Legend of Zelda: Breath of the Wild|Adventure,Super Mario Odyssey|Platformer,Mario Kart 8 Deluxe|Racing,Animal Crossing: New Horizons|Indie,Pokémon Legends: Arceus|RPG,Super Smash Bros. Ultimate|Fighting,Metroid Dread|Platformer,Celeste|Platformer,Hollow Knight|Platformer,Cuphead|Platformer,Ori and the Will of the Wisps|Platformer,Little Nightmares II|Horror,Outlast 2|Horror,Dead Space|Horror,Silent Hill 2|Horror,Alien: Isolation|Horror,Phasmophobia|Horror,The Evil Within 2|Horror,Resident Evil Village|Horror,Civilization VI|Strategy,Age of Empires IV|Strategy,Total War: Warhammer III|Strategy,XCOM 2|Strategy,StarCraft II|Strategy,Cities: Skylines|Strategy,Planet Zoo|Strategy,The Sims 4|Sandbox,Euro Truck Simulator 2|Sandbox,Microsoft Flight Simulator|Sandbox,Subnautica|Adventure,Rust|Sandbox,ARK: Survival Evolved|Sandbox,Valheim|Adventure,No Man's Sky|Adventure,Uncharted 4|Adventure,Tomb Raider (2013)|Adventure,Life is Strange|Adventure,Detroit: Become Human|Adventure,Portal 2|Puzzle,Half-Life: Alyx|Shooter,Left 4 Dead 2|Shooter,Team Fortress 2|Shooter,Dishonored 2|Action,Prey (2017)|Shooter,Control|Action,Max Payne 3|Action,Mafia: Definitive Edition|Action,Sleeping Dogs|Action,Just Cause 4|Action,Watch Dogs 2|Action,Prince of Persia: Sands of Time|Adventure,Crash Bandicoot N. Sane Trilogy|Platformer,Spyro Reignited Trilogy|Platformer,Sonic Mania|Platformer,Rayman Legends|Platformer,Limbo|Puzzle,Inside|Puzzle,Undertale|Indie,Dead Cells|Indie,Slay the Spire|Strategy,NBA 2K24|Sports,WWE 2K23|Sports,eFootball 2024|Sports";
+const GAMES=RAW.split(",").map((s,i,a)=>{const [n,g]=s.split("|"),N=a.length;const tier=Math.min(10,Math.floor(i*11/N));return{id:i,n,g,rank:i+1,p:999-10*tier}});
+const HUE=s=>[...s].reduce((a,c)=>a*31+c.charCodeAt(0)>>>0,7)%360;
+const DESC={Action:"Fast, cinematic combat and big set pieces. Hit hard, dodge late, and chase the next boss.",RPG:"A deep role-playing world: build your character, make choices that matter, and lose hours to side quests.",Shooter:"Precision gunplay and quick reflexes. Learn the maps, master your loadout, and win the round.",Sports:"Authentic sports action with real teams, tactics and head-to-head matches.",Racing:"Tune your car, hit the apex and race for first place on stunning tracks.",Fighting:"Frame-perfect combos, a big roster and heavy hits. Easy to start, hard to master.",Horror:"Tense, atmospheric survival horror. Save your ammo and keep the lights on.",Strategy:"Plan, expand and out-think your rivals in a game of long-term decisions.",Sandbox:"An open world with no fixed goals. Build, explore and make your own story.",Adventure:"Story-driven exploration with memorable places, puzzles and characters.",Platformer:"Tight jumps, clever levels and pure game-feel. A true classic style.",Puzzle:"Clever, bite-size challenges that reward patient thinking.",Indie:"A hand-crafted gem with personality, heart and lots of replay value."};
+let cart=[],filter="All",pay="upi",step=0,total=0;
+const $=id=>document.getElementById(id),rs=n=>"₹"+n;
+const cats=["All",...new Set(GAMES.map(g=>g.g))];
+$("chips").innerHTML=cats.map(c=>`<button class="chip${c=="All"?" on":""}" data-c="${c}">${c}</button>`).join("");
+$("chips").onclick=e=>{const c=e.target.dataset.c;if(!c)return;filter=c;document.querySelectorAll(".chip").forEach(b=>b.classList.toggle("on",b.dataset.c==c));render()};
+$("q").oninput=render;
+function art(g,cls=""){const h=HUE(g.n);return `style="background:linear-gradient(135deg,hsl(${h} 70% 38%),hsl(${(h+50)%360} 70% 18%))"`}
+function ini(n){return n.replace(/[^A-Za-z0-9 ]/g,"").split(" ").filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase()}
+function render(){const t=$("q").value.trim().toLowerCase();
+ const list=GAMES.filter(g=>(filter=="All"||g.g==filter)&&(!t||g.n.toLowerCase().includes(t)||g.g.toLowerCase().includes(t)));
+ $("none").hidden=list.length>0;
+ $("grid").innerHTML=list.map(g=>`<div class="card" tabindex="0" data-id="${g.id}"><div class="art" ${art(g)}>${ini(g.n)}<span class="rank">#${g.rank}</span></div><div class="info"><h3>${g.n}</h3><div class="meta">${g.g}</div><div class="row"><span class="price">${rs(g.p)}</span><button class="btn" data-add="${g.id}">Add</button></div></div></div>`).join("")}
+$("grid").onclick=e=>{const a=e.target.closest("[data-add]");if(a){e.stopPropagation();add(+a.dataset.add);return}const c=e.target.closest(".card");if(c)openGame(+c.dataset.id)};
+$("grid").onkeydown=e=>{if(e.key=="Enter"&&e.target.classList.contains("card"))openGame(+e.target.dataset.id)};
+function add(id){if(!cart.includes(id))cart.push(id);$("cc").textContent=cart.length;toast()}
+function toast(){const t=document.createElement("div");t.textContent="Added to cart";t.style.cssText="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#ffb629;color:#2a1b00;padding:10px 18px;border-radius:6px;font:700 14px 'Chakra Petch';z-index:50";document.body.append(t);setTimeout(()=>t.remove(),1100)}
+function open_(h){$("panel").innerHTML=h;$("ov").classList.add("open")}
+function close_(){$("ov").classList.remove("open")}
+$("ov").onclick=e=>{if(e.target.id=="ov")close_()};
+document.onkeydown=e=>{if(e.key=="Escape")close_()};
+const X='<button class="x" onclick="close_()">CLOSE</button>';
+function openGame(id){const g=GAMES[id],yt="https://www.youtube.com/results?search_query="+encodeURIComponent(g.n+" official trailer");
+ open_(`${X}<h2>${g.n}</h2><div class="trailer" ${art(g)}><a class="play" href="${yt}" target="_blank" rel="noopener"><b>▶</b>Play trailer</a></div>
+ <div class="tags"><span>${g.g}</span><span>Popularity #${g.rank} of ${GAMES.length}</span><span>Instant digital key</span></div>
+ <p>${DESC[g.g]}</p><p class="note" style="margin-top:8px">${g.n} is one of the most played ${g.g.toLowerCase()} titles. Tap Play trailer to watch the official trailer on YouTube.</p>
+ <div class="row" style="margin-top:16px;display:flex;justify-content:space-between;align-items:center"><span class="price" style="font-size:28px">${rs(g.p)}</span><span><button class="btn" onclick="add(${g.id})">Add to cart</button> <button class="btn grey" onclick="add(${g.id});showCart()">Buy now</button></span></div>`)}
+$("cartOpen").onclick=showCart;
+function showCart(){total=cart.reduce((s,i)=>s+GAMES[i].p,0);
+ open_(`${X}<h2>Your cart</h2><div class="steps"><b>1 Cart</b> › 2 Method › 3 Pay › 4 Receipt</div>`+(cart.length?cart.map(i=>`<div class="line"><span>${GAMES[i].n}</span><span>${rs(GAMES[i].p)} <button onclick="rm(${i})" aria-label="Remove">✕</button></span></div>`).join("")+`<div class="line"><span>Total</span><span class="total">${rs(total)}</span></div><div style="margin-top:14px"><button class="btn" onclick="methods()">Proceed to payment</button></div>`:`<p class="empty">Your cart is empty. Add a game to begin.</p>`))}
+function rm(i){cart=cart.filter(x=>x!=i);$("cc").textContent=cart.length;showCart()}
+const M={upi:["UPI QR","Scan with any UPI app"],app:["UPI apps","GPay, PhonePe, Paytm"],card:["Card","Credit or debit"],net:["Net banking","All major banks"],wallet:["Wallet","Paytm, Amazon Pay"]};
+function methods(){open_(`${X}<h2>Select payment method</h2><div class="steps">1 Cart › <b>2 Method</b> › 3 Pay › 4 Receipt</div><div class="total">${rs(total)}</div><div class="methods">${Object.entries(M).map(([k,v])=>`<button class="${k==pay?"on":""}" onclick="pay='${k}';methods()"><b>${v[0]}</b><br><span class="note">${v[1]}</span></button>`).join("")}</div><button class="btn" onclick="payScreen()">Continue</button> <button class="btn grey" onclick="showCart()">Back</button>`)}
+function payScreen(){const up=`upi://pay?pa=8897406551@fam&pn=Classic%20Game%20Vault&am=${total}&cu=INR&tn=Game%20order`;let body;
+ if(pay=="upi")body=`<div class="center"><div class="qrbox" id="qr"></div><p>Scan to pay <b class="total">${rs(total)}</b></p><p>UPI ID: <span class="upi">8897406551@fam</span></p></div>`;
+ else if(pay=="app")body=`<div class="center"><p>Pay <b class="total">${rs(total)}</b> to <span class="upi">8897406551@fam</span></p><p><a class="btn" style="text-decoration:none;display:inline-block;margin-top:10px" href="${up}">Open my UPI app</a></p><p class="note" style="margin-top:10px">Works on a phone with GPay, PhonePe, Paytm or any UPI app.</p></div>`;
+ else body=`<div class="center"><p><b>${M[pay][0]}</b> needs a payment gateway (like Razorpay or Cashfree) connected to this store.</p><p class="note">Until then, pay with UPI.</p><button class="btn" onclick="pay='upi';payScreen()">Pay with UPI QR</button></div>`;
+ open_(`${X}<h2>Payment</h2><div class="steps">1 Cart › 2 Method › <b>3 Pay</b> › 4 Receipt</div>${body}${["upi","app"].includes(pay)?`<hr style="border-color:#4b78ad;margin:14px 0"><p class="note">After paying, enter your 12-digit UPI reference number (UTR) and your email for the game key.</p><input class="f" id="utr" inputmode="numeric" maxlength="12" placeholder="UPI reference (UTR)"><input class="f" id="em" type="email" placeholder="Email to receive game keys"><button class="btn" onclick="done()">I have paid</button> `:""}<button class="btn grey" onclick="methods()">Back</button>`);
+ if(pay=="upi")new QRCode($("qr"),{text:up,width:190,height:190})}
+function done(){const u=$("utr").value.trim(),e=$("em").value.trim();if(!/^\d{12}$/.test(u)||!/\S+@\S+\.\S+/.test(e)){alert("Enter a 12-digit UTR and a valid email.");return}
+ const id="CGV"+Date.now().toString().slice(-8),items=cart.map(i=>GAMES[i].n);
+ open_(`${X}<h2>Payment submitted</h2><div class="steps">1 Cart › 2 Method › 3 Pay › <b>4 Receipt</b></div><p style="color:var(--ok)">Order ${id} received.</p>${items.map(n=>`<div class="line"><span>${n}</span></div>`).join("")}<div class="line"><span>Paid</span><span class="total">${rs(total)}</span></div><p class="note" style="margin-top:10px">UTR ${u}. Keys will be sent to ${e.replace(/</g,"")} after the payment is verified.</p><button class="btn" onclick="close_()">Done</button>`);cart=[];$("cc").textContent=0}
+render();
+</script></body></html>
